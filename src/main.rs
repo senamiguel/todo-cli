@@ -9,26 +9,26 @@ fn main() {
     loop {
         print!("\x1B[2J\x1B[1;1H");
         show_tasks(&store);
-        println!("\n1. Adicionar");
-        println!("2. Alternar status");
-        println!("3. Alterar descrição");
-        println!("4. Remover");
-        println!("5. Sair");
+        println!("\n1. Add");
+        println!("2. Toggle status");
+        println!("3. Edit description");
+        println!("4. Remove");
+        println!("5. Exit");
 
         let mut choice = String::new();
-        io::stdin().read_line(&mut choice).expect("Falha ao ler");
+        io::stdin().read_line(&mut choice).expect("Failed to read");
 
         match choice.trim() {
             "1" => {
                 let id = read_id();
                 let mut desc = String::new();
 
-                println!("Descrição:");
-                io::stdin().read_line(&mut desc).expect("Falha ao ler"); 
+                println!("Description:");
+                io::stdin().read_line(&mut desc).expect("Failed to read"); 
                 print_feedback(
                     store.create_task(id, desc.trim().to_string()),
-                    "Tarefa criada com sucesso!",
-                    "Já existe uma tarefa com esse ID."
+                    "Task created successfully!",
+                    "A task with this ID already exists."
                 );
             }
 
@@ -36,8 +36,8 @@ fn main() {
                 let id = read_id();
                 print_feedback(
                     store.toggle_status(id),
-                    "Status da tarefa alterado!",
-                    "Tarefa não encontrada."
+                    "Task status changed!",
+                    "Task not found."
                 );
             }
 
@@ -45,13 +45,13 @@ fn main() {
                 let id = read_id();
                 let mut desc = String::new();
 
-                println!("Nova descrição:");
-                io::stdin().read_line(&mut desc).expect("Falha ao ler");
+                println!("New description:");
+                io::stdin().read_line(&mut desc).expect("Failed to read");
 
                 print_feedback(
                     store.set_description(id, desc.trim().to_string()),
-                    "Descrição alterada!",
-                    "Tarefa não encontrada."
+                    "Description changed!",
+                    "Task not found."
                 );
             }
 
@@ -59,41 +59,41 @@ fn main() {
                 let id = read_id();
                 print_feedback(
                     store.remove(id),
-                    "Tarefa removida com sucesso!",
-                    "Tarefa não encontrada."
+                    "Task removed successfully!",
+                    "Task not found."
                 );
             }
 
             "5" => break,
 
-            _ => println!("Opção inválida"),
+            _ => println!("Invalid option"),
         }
 
-        println!("\nPressione Enter para continuar...");
+        println!("\nPress Enter to continue...");
         let mut pause = String::new();
         io::stdin().read_line(&mut pause).unwrap();
     }
 }
 
-    fn print_feedback(success: bool, msg_ok: &str, msg_err: &str) {
+fn print_feedback(success: bool, msg_ok: &str, msg_err: &str) {
     if success {
-        println!("Sucesso: {}", msg_ok);
+        println!("Success: {}", msg_ok);
     } else {
-        println!("ERRO: {}", msg_err);
+        println!("ERROR: {}", msg_err);
     }
 }
 
 fn read_id() -> u8 {
     let mut id = String::new();
     println!("ID:");
-    io::stdin().read_line(&mut id).expect("Falha ao ler");
+    io::stdin().read_line(&mut id).expect("Failed to read");
     id.trim().parse().unwrap_or(0)
 }
 
 fn show_tasks(store: &TaskStore) {
     let tasks = store.get_tasks();
     if tasks.is_empty() {
-        println!("Sua lista de tarefas está vazia.");
+        println!("Your task list is empty.");
     }
     for element in &tasks {
         println!("[{}] - {} - {}", set_icon(element.is_done), element.id, element.description);
