@@ -29,9 +29,12 @@ fn main() {
                 };
                 let mut desc = String::new();
 
-                print!("Description: ");
+                print!("Description (Press enter to cancel): ");
                 io::stdout().flush().unwrap();
                 io::stdin().read_line(&mut desc).expect("Failed to read"); 
+                if desc.trim().is_empty() {
+                    continue;
+                }
                 print_feedback(
                     store.create_task(id, desc.trim().to_string()),
                     "Task created successfully!",
@@ -58,10 +61,12 @@ fn main() {
                 };
                 let mut desc = String::new();
 
-                print!("New description: ");
+                print!("New description(Press enter to cancel): ");
                 io::stdout().flush().unwrap();
                 io::stdin().read_line(&mut desc).expect("Failed to read");
-
+                if desc.trim().is_empty() {
+                    continue;
+                }
                 print_feedback(
                     store.set_description(id, desc.trim().to_string()),
                     "Description changed!",
@@ -102,7 +107,7 @@ fn print_feedback(success: bool, msg_ok: &str, msg_err: &str) {
 
 fn read_id() -> Option<u8> {
     let mut id = String::new();
-    print!("ID: ");
+    print!("ID(Press enter to cancel): ");
     io::stdout().flush().unwrap();
     io::stdin().read_line(&mut id).expect("Failed to read");
     id.trim().parse().ok()
@@ -110,12 +115,6 @@ fn read_id() -> Option<u8> {
 
 fn get_valid_id() -> Option<u8> {
     let id = read_id();
-    if id.is_none() {
-        println!("{}", "Please enter a valid number.".red());
-        println!("\nPress Enter to continue...");
-        let mut pause = String::new();
-        io::stdin().read_line(&mut pause).unwrap();
-    }
     id
 }
 
