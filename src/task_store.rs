@@ -16,10 +16,12 @@ impl TaskStore {
             task.toggle();
         }
     }
-    pub fn list_tasks(&self){
-        for (id, task) in &self.tasks{
-            println!("{}-{} {}",id,Self::set_icon(task.is_done), task.description)
+    pub fn get_tasks(&self)-> Vec<&Task>{
+        let mut tasks_list = Vec::new();
+        for element in self.tasks.iter(){
+            tasks_list.push(element.1)
         }
+        tasks_list
     }
     pub fn create_task(&mut self, id: u8, description: String) {
         let task = Task::new(id, description);
@@ -30,7 +32,5 @@ impl TaskStore {
             task.set_description(desc);
         }
     }
-    fn set_icon(is_done: bool) -> &'static str {
-        if is_done { "✔️" } else { "❌" }
-    }
+
 }

@@ -2,18 +2,18 @@ mod task;
 mod task_store;
 
 use std::io::{self};
-use crate::task_store::TaskStore;
+use crate::{task_store::TaskStore};
 
 fn main() {
     let mut store = TaskStore::new();
-
     loop {
+        print!("\x1B[2J\x1B[1;1H");
+        show_tasks(&store);
         println!("\n1. Adicionar");
-        println!("2. Listar");
-        println!("3. Alternar status");
-        println!("4. Alterar descrição");
-        println!("5. Remover");
-        println!("6. Sair");
+        println!("2. Alternar status");
+        println!("3. Alterar descrição");
+        println!("4. Remover");
+        println!("5. Sair");
 
         let mut choice = String::new();
         io::stdin().read_line(&mut choice).expect("Falha ao ler");
@@ -36,13 +36,6 @@ fn main() {
             }
 
             "2" => {
-                store.list_tasks();
-                println!("Aperte enter para sair.");
-                let mut input = String::new();
-                io::stdin().read_line(&mut input).unwrap();
-            }
-
-            "3" => {
                 let mut id = String::new();
 
                 println!("ID:");
@@ -52,7 +45,7 @@ fn main() {
                 store.toggle_status(id);
             }
 
-            "4" => {
+            "3" => {
                 let mut id = String::new();
                 let mut desc = String::new();
 
@@ -66,7 +59,7 @@ fn main() {
                 store.set_description(id, desc.trim().to_string());
             }
 
-            "5" => {
+            "4" => {
                 let mut id = String::new();
 
                 println!("ID:");
@@ -76,10 +69,23 @@ fn main() {
                 store.remove(id);
             }
 
-            "6" => break,
+            "5" => break,
 
             _ => println!("Opção inválida"),
         }
-        print!("\x1B[2J\x1B[1;1H");
     }
+
+}
+
+fn show_tasks(store: &TaskStore){
+    let tasks = store.get_tasks();
+    if tasks.is_empty(){
+        println!("Sua lista de tarefas está vazia.");
+    }
+    for element in &tasks{
+        println!("[{}] - {} - {}", set_icon(element.is_done), element.id, element.description);
+    }
+}
+fn set_icon(is_done: bool) -> &'static str {
+    if is_done { "✔️" } else { "❌" }
 }
