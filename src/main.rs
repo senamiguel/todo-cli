@@ -1,7 +1,7 @@
 mod task;
 mod task_store;
 
-use std::io::{self};
+use std::io::{self, Write};
 use crate::{task_store::TaskStore};
 
 fn main() {
@@ -20,10 +20,14 @@ fn main() {
 
         match choice.trim() {
             "1" => {
-                let id = read_id();
+                let id = match get_valid_id() {
+                    Some(val) => val,
+                    None => continue,
+                };
                 let mut desc = String::new();
 
-                println!("Description:");
+                print!("Description: ");
+                io::stdout().flush().unwrap();
                 io::stdin().read_line(&mut desc).expect("Failed to read"); 
                 print_feedback(
                     store.create_task(id, desc.trim().to_string()),
@@ -33,7 +37,10 @@ fn main() {
             }
 
             "2" => {
-                let id = read_id();
+                let id = match get_valid_id() {
+                    Some(val) => val,
+                    None => continue,
+                };
                 print_feedback(
                     store.toggle_status(id),
                     "Task status changed!",
@@ -42,10 +49,14 @@ fn main() {
             }
 
             "3" => {
-                let id = read_id();
+                let id = match get_valid_id() {
+                    Some(val) => val,
+                    None => continue,
+                };
                 let mut desc = String::new();
 
-                println!("New description:");
+                print!("New description: ");
+                io::stdout().flush().unwrap();
                 io::stdin().read_line(&mut desc).expect("Failed to read");
 
                 print_feedback(
@@ -56,7 +67,10 @@ fn main() {
             }
 
             "4" => {
-                let id = read_id();
+                let id = match get_valid_id() {
+                    Some(val) => val,
+                    None => continue,
+                };
                 print_feedback(
                     store.remove(id),
                     "Task removed successfully!",
@@ -83,11 +97,23 @@ fn print_feedback(success: bool, msg_ok: &str, msg_err: &str) {
     }
 }
 
-fn read_id() -> u8 {
+fn read_id() -> Option<u8> {
     let mut id = String::new();
-    println!("ID:");
+    print!("ID: ");
+    io::stdout().flush().unwrap();
     io::stdin().read_line(&mut id).expect("Failed to read");
-    id.trim().parse().unwrap_or(0)
+    id.trim().parse().ok()
+}
+
+fn get_valid_id() -> Option<u8> {
+    let id = read_id();
+    if id.is_none() {
+        println!("Please enter a valid number.");
+        println!("\nPress Enter to continue...");
+        let mut pause = String::new();
+        io::stdin().read_line(&mut pause).unwrap();
+    }
+    id
 }
 
 fn show_tasks(store: &TaskStore) {
