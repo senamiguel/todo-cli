@@ -3,17 +3,20 @@ mod task_store;
 
 use std::io::{self, Write};
 use crate::{task_store::TaskStore};
+use colored::*;
+
 
 fn main() {
     let mut store = TaskStore::new();
     loop {
         print!("\x1B[2J\x1B[1;1H");
         show_tasks(&store);
-        println!("\n1. Add");
-        println!("2. Toggle status");
-        println!("3. Edit description");
-        println!("4. Remove");
-        println!("5. Exit");
+        println!("\n{}", "--- TODO CLI ---".bright_cyan().bold());
+        println!("{}", "1. Add".bright_blue());
+        println!("{}", "2. Toggle status".bright_blue());
+        println!("{}", "3. Edit description".bright_blue());
+        println!("{}", "4. Remove".bright_blue());
+        println!("{}", "5. Exit".bright_blue());
 
         let mut choice = String::new();
         io::stdin().read_line(&mut choice).expect("Failed to read");
@@ -80,7 +83,7 @@ fn main() {
 
             "5" => break,
 
-            _ => println!("Invalid option"),
+            _ => println!("{}", "Invalid option".red()),
         }
 
         println!("\nPress Enter to continue...");
@@ -91,9 +94,9 @@ fn main() {
 
 fn print_feedback(success: bool, msg_ok: &str, msg_err: &str) {
     if success {
-        println!("Success: {}", msg_ok);
+        println!("{}", format!("Success: {}", msg_ok).green());
     } else {
-        println!("ERROR: {}", msg_err);
+        println!("{}", format!("ERROR: {}", msg_err).red());
     }
 }
 
@@ -108,7 +111,7 @@ fn read_id() -> Option<u8> {
 fn get_valid_id() -> Option<u8> {
     let id = read_id();
     if id.is_none() {
-        println!("Please enter a valid number.");
+        println!("{}", "Please enter a valid number.".red());
         println!("\nPress Enter to continue...");
         let mut pause = String::new();
         io::stdin().read_line(&mut pause).unwrap();
@@ -119,10 +122,17 @@ fn get_valid_id() -> Option<u8> {
 fn show_tasks(store: &TaskStore) {
     let tasks = store.get_tasks();
     if tasks.is_empty() {
-        println!("Your task list is empty.");
-    }
-    for element in &tasks {
-        println!("[{}] - {} - {}", set_icon(element.is_done), element.id, element.description);
+        println!("{}", "Your task list is empty.".bright_yellow());
+    } else {
+        println!("{}", "=== My Tasks ===".bright_cyan().bold());
+        for element in &tasks {
+            let line = format!("[{}] {} - {}", set_icon(element.is_done), element.id, element.description);
+            if element.is_done {
+                println!("{}", line.green().strikethrough());
+            } else {
+                println!("{}", line.yellow());
+            }
+        }
     }
 }
 
