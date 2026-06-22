@@ -1,14 +1,14 @@
-use std::collections::{HashMap};
+use std::collections::{BTreeMap};
 use crate::task::{Task};
 
 pub struct TaskStore{
-    tasks: HashMap<usize,Task>,
+    tasks: BTreeMap<usize,Task>,
     next_id: usize
 }
 impl TaskStore {
     pub fn new() -> Self{
         Self { 
-            tasks: HashMap::new(),
+            tasks: BTreeMap::new(),
             next_id : 1
          }
     }
