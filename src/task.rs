@@ -1,10 +1,10 @@
 pub struct Task{
-    pub id: u8,
+    pub id: usize,
     pub description:String,
     pub is_done:bool
 }
 impl Task {
-    pub fn new(id:u8,description:String) -> Task{
+    pub fn new(id:usize,description:String) -> Task{
         Self{
             id:id,
             description:description,

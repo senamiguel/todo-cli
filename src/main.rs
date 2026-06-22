@@ -23,12 +23,7 @@ fn main() {
 
         match choice.trim() {
             "1" => {
-                let id = match get_valid_id() {
-                    Some(val) => val,
-                    None => continue,
-                };
                 let mut desc = String::new();
-
                 print!("Description (Press enter to cancel): ");
                 io::stdout().flush().unwrap();
                 io::stdin().read_line(&mut desc).expect("Failed to read"); 
@@ -36,7 +31,7 @@ fn main() {
                     continue;
                 }
                 print_feedback(
-                    store.create_task(id, desc.trim().to_string()),
+                    store.create_task(desc.trim().to_string()),
                     "Task created successfully!",
                     "A task with this ID already exists."
                 );
@@ -105,7 +100,7 @@ fn print_feedback(success: bool, msg_ok: &str, msg_err: &str) {
     }
 }
 
-fn read_id() -> Option<u8> {
+fn read_id() -> Option<usize> {
     let mut id = String::new();
     print!("ID(Press enter to cancel): ");
     io::stdout().flush().unwrap();
@@ -113,7 +108,7 @@ fn read_id() -> Option<u8> {
     id.trim().parse().ok()
 }
 
-fn get_valid_id() -> Option<u8> {
+fn get_valid_id() -> Option<usize> {
     let id = read_id();
     id
 }
