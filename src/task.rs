@@ -1,3 +1,4 @@
+#[derive(serde::Serialize, serde::Deserialize)]
 pub struct Task{
     pub id: usize,
     pub description:String,

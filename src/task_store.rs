@@ -1,6 +1,9 @@
+use std::fs::File;
 use std::collections::{BTreeMap};
 use crate::task::{Task};
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct TaskStore{
     tasks: BTreeMap<usize,Task>,
     next_id: usize
@@ -10,7 +13,7 @@ impl TaskStore {
         Self { 
             tasks: BTreeMap::new(),
             next_id : 1
-         }
+        }
     }
     pub fn remove(&mut self, id:usize)-> bool{
         if !self.check_task_exists(id) {
@@ -30,12 +33,16 @@ impl TaskStore {
         for element in self.tasks.iter(){
             tasks_list.push(element.1)
         }
-        tasks_list
+        tasks_list  
     }
     pub fn create_task(&mut self,description: String)-> bool{
+        let file_path = "data.json";
         let task = Task::new(self.next_id, description);
         self.next_id += 1;
         self.tasks.entry(task.id).or_insert(task);
+        let file = File::create("data.json").expect("Failed to open/reset file");
+        serde_json::to_writer_pretty(file, &self.tasks).unwrap();
+
         true
     }
     pub fn set_description(&mut self, id: usize, desc: String)-> bool {
